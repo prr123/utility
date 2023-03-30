@@ -25,43 +25,42 @@ func CheckFilnam(filnam, ext string)(err error) {
     return nil
 }
 
-func ParseFlagsStart(args []string, flags []string, flagStart int) (argmap map[string]interface{}, err error){
 // routine that reads cli and returns a map of key and values
+func ParseFlagsStart(args []string, flags []string, flagStart int) (argmap map[string]interface{}, err error){
 
     numArg:= len(args)
     if numArg < 2 { return argmap, fmt.Errorf("insufficient args!")}
 	if (len(flags) == 0 ) { return argmap, fmt.Errorf("insufficient flags!")}
 	if flagStart == 0 {flagStart = 1}
-    pos:= 0
-    argmap = make(map[string]interface{})
+	pos:= 0
+	argmap = make(map[string]interface{})
 
 	for j:=flagStart; j< numArg; j++ {
-        str := args[j]
+		str := args[j]
 		if len(str) < 2 { return argmap, fmt.Errorf("invalid flag too short: %d %s",j, str)}
-        if str[0] != '/' {return argmap, fmt.Errorf("invalid flag no slash: %d %s",j, str)}
+		if str[0] != '/' {return argmap, fmt.Errorf("invalid flag no slash: %d %s",j, str)}
 
 		pos = 0
-        for j:=1; j<len(str); j++ {
-            if str[j] == '=' {
-                pos = j
-                break
-            }
+		for j:=1; j<len(str); j++ {
+			if str[j] == '=' {
+				pos = j
+				break
+			}
 		}
 		flagKey := ""
 		flagVal := ""
 		if pos==0 {
 			flagKey = str[1:]
-        	flagVal = "none"
-        } else {
-        	flagKey = str[1:pos]
-        	flagVal = str[pos+1:]
+			flagVal = "none"
+		} else {
+			flagKey = str[1:pos]
+			flagVal = str[pos+1:]
 		}
 
 
 		found := false
 
 		for i:=0; i<len(flags); i++ {
-//	fmt.Printf("flagKey %d %s %s\n", j, flagKey, flags[i])
 
 			if flagKey == flags[i] {
 				argmap[flagKey] = flagVal
@@ -72,48 +71,45 @@ func ParseFlagsStart(args []string, flags []string, flagStart int) (argmap map[s
 		if !found { return argmap, fmt.Errorf("arg %d: %s is not a viable flag!", j, str) }
 	}
 
-    return argmap, nil
+	return argmap, nil
 }
 
-func ParseFlags(args []string, flags []string) (argmap map[string]interface{}, err error){
 // routine that reads cli and returns a map of key and values
+func ParseFlags(args []string, flags []string) (argmap map[string]interface{}, err error){
 
-    numArg:= len(args)
-    if numArg < 2 {
-        return argmap, fmt.Errorf("insufficient args!")
-    }
+	numArg:= len(args)
+	if numArg < 2 {
+		return argmap, fmt.Errorf("insufficient args!")
+	}
 
-    pos:= 0
-    argmap = make(map[string]interface{})
+	pos:= 0
+	argmap = make(map[string]interface{})
 
 	for j:=2; j< numArg; j++ {
-        str := args[j]
+    	str := args[j]
 		if len(str) < 2 { return argmap, fmt.Errorf("invalid flag too short: %d %s",j, str)}
-        if str[0] != '/' {return argmap, fmt.Errorf("invalid flag no slash: %d %s",j, str)}
+		if str[0] != '/' {return argmap, fmt.Errorf("invalid flag no slash: %d %s",j, str)}
 
 		pos = 0
-        for j:=1; j<len(str); j++ {
-            if str[j] == '=' {
-                pos = j
-                break
-            }
+		for j:=1; j<len(str); j++ {
+			if str[j] == '=' {
+				pos = j
+				break
+			}
 		}
 		flagKey := ""
 		flagVal := ""
 		if pos==0 {
 			flagKey = str[1:]
-        	flagVal = "none"
-        } else {
-        	flagKey = str[1:pos]
-        	flagVal = str[pos+1:]
+			flagVal = "none"
+		} else {
+			flagKey = str[1:pos]
+			flagVal = str[pos+1:]
 		}
-
 
 		found := false
 
 		for i:=0; i<len(flags); i++ {
-//	fmt.Printf("flagKey %d %s %s\n", j, flagKey, flags[i])
-
 			if flagKey == flags[i] {
 				argmap[flagKey] = flagVal
 				found = true
@@ -122,83 +118,82 @@ func ParseFlags(args []string, flags []string) (argmap map[string]interface{}, e
 		}
 		if !found { return argmap, fmt.Errorf("arg %d: %s is not a viable flag!", j, str) }
 	}
-
-    return argmap, nil
+	return argmap, nil
 }
 
-func GetFlags(args []string) (argmap map[string]interface{},  err error){
 // routine that reads cli and returns a map of key and values
+func GetFlags(args []string) (argmap map[string]interface{},  err error){
 
-    numArg:= len(args)
-    if numArg < 2 {
-        return argmap, fmt.Errorf("insufficient args!")
-    }
+	numArg:= len(args)
+	if numArg < 2 {
+		return argmap, fmt.Errorf("insufficient args!")
+	}
 
-    pos:= 0
-    argmap = make(map[string]interface{})
-    for i:=2; i< numArg; i++ {
-        str := args[i]
-        if str[0] != '/' {
-            return argmap, fmt.Errorf("invalid flag no/: %d %s",i, str)
-        }
-        for j:=1; j<len(str); j++ {
-            if str[j] == '=' {
-                pos = j
-                break
-            }
+	pos:= 0
+	argmap = make(map[string]interface{})
+	for i:=2; i< numArg; i++ {
+		str := args[i]
+		if str[0] != '/' {
+			return argmap, fmt.Errorf("invalid flag no/: %d %s",i, str)
+		}
+		for j:=1; j<len(str); j++ {
+			if str[j] == '=' {
+				pos = j
+				break
+			}
 		}
 
 		if pos==0 {
-            return argmap, fmt.Errorf("invalid flag no=: %d %s",i, str)
-        }
-        flag := str[1:pos]
-        flagVal := str[pos+1:]
-        argmap[flag]=flagVal
-    }
-    return argmap, nil
+			return argmap, fmt.Errorf("invalid flag no=: %d %s",i, str)
+		}
+		flag := str[1:pos]
+		flagVal := str[pos+1:]
+		argmap[flag]=flagVal
+	}
+	return argmap, nil
 }
 
 
-
-func IsAlpha(let byte)(res bool) {
 // function that tests whether byte is alpha
-    res = false
-    if (let >= 'a' && let <= 'z') || (let >= 'A' && let <= 'Z') { res = true}
-    return res
+func IsAlpha(let byte)(res bool) {
+	res = false
+	if (let >= 'a' && let <= 'z') || (let >= 'A' && let <= 'Z') { res = true}
+	return res
 }
 
+// function that tests whether byte is aphanumeric
 func IsAlphaNumeric(let byte)(res bool) {
-// function that tests whether byte is aphanumeric
-    res = false
-    tbool := (let >= 'a' && let <= 'z') || (let >= 'A' && let <= 'Z')
-    if tbool || (let >= '0' && let <= '9') { res = true }
+	res = false
+	tbool := (let >= 'a' && let <= 'z') || (let >= 'A' && let <= 'Z')
+	if tbool || (let >= '0' && let <= '9') { res = true }
     return res
 }
 
+// function that tests whether byte is aphanumeric
 func IsNumeric(let byte)(res bool) {
-// function that tests whether byte is aphanumeric
-    res = false
-    if (let >= '0') && (let <= '9') { res = true }
-    return res
+	res = false
+	if (let >= '0') && (let <= '9') { res = true }
+	return res
 }
 
+// function that tests whether byte is aphanumeric
 func IsWsp(let byte)(res bool) {
-// a function that tests whether the passed-in byte is a whitespace
 	res = false
 	if let ==' ' { res = true}
 	return res
 }
 
-func FatErr(fs string, msg string, err error) {
 // function that displays a console error message and exits program
+func FatErr(fs string, msg string, err error) {
 	if err != nil {
 		fmt.Printf("error %s:: %s!%v\n", fs, msg, err)
 	} else {
 		fmt.Printf("error %s:: %s!\n", fs, msg)
 	}
-	os.Exit(2)
+	os.Exit(-1)
 }
 
+// creates file in file path and returns file handle
 func CreateOutFil(folderPath, filNam, filExt string) (outfil *os.File, err error) {
 	var fullFilNam, filpath string
 
@@ -247,81 +242,77 @@ func CreateOutFil(folderPath, filNam, filExt string) (outfil *os.File, err error
 	}
 
 	// check whether file exists
-    _, err = os.Stat(filpath)
-    if !os.IsNotExist(err) {
-        err1:= os.Remove(filpath)
-        if err1 != nil {
-            return nil, fmt.Errorf("os.Remove: cannot remove existing file: %s! error: %v", filpath, err1)
-        }
-    }
+	_, err = os.Stat(filpath)
+	if !os.IsNotExist(err) {
+		err1:= os.Remove(filpath)
+		if err1 != nil {
+			return nil, fmt.Errorf("os.Remove: cannot remove existing file: %s! error: %v", filpath, err1)
+		}
+	}
 
-    outfil, err = os.Create(filpath)
-    if err != nil {
-        return nil, fmt.Errorf("os.Create: cannot create file: %s! %v", filpath, err)
-    }
-    return outfil, nil
+	outfil, err = os.Create(filpath)
+	if err != nil {
+		return nil, fmt.Errorf("os.Create: cannot create file: %s! %v", filpath, err)
+	}
+	return outfil, nil
 }
 
+// method that creates a file folder, returns the full path, true if folder exists
 func CreateFileFolder(path, foldnam string)(fullPath string, existDir bool, err error) {
 
     // check if foldenam is valid -> no whitespaces
-    fnamValid := true
-    for i:=0; i< len(foldnam); i++ {
-        if foldnam[i] == ' ' {
-            fnamValid = false
-            break
-        }
-    }
+	fnamValid := true
+	for i:=0; i< len(foldnam); i++ {
+		if foldnam[i] == ' ' {
+			fnamValid = false
+			break
+		}
+	}
 
-    if !fnamValid {
-        return "", false, fmt.Errorf("error -- not a valid folder name %s!", foldnam)
-    }
+	if !fnamValid {
+		return "", false, fmt.Errorf("error -- not a valid folder name %s!", foldnam)
+	}
 
     // check whether foldnam folder exists
-    fullPath =""
-    switch {
-        case len(path) == 0:
-            fullPath = foldnam
+	fullPath =""
+	switch {
+	case len(path) == 0:
+		fullPath = foldnam
 
-        case path[0] == '/':
-            return "", false, fmt.Errorf("error -- absolute path!")
+	case path[0] == '/':
+		return "", false, fmt.Errorf("error -- absolute path!")
 
-        case path[len(path)  -1] == '/':
-                fullPath = path + foldnam
+	case path[len(path)  -1] == '/':
+		fullPath = path + foldnam
 
-        default:
-                fullPath = path + "/" + foldnam
-    }
-//  fmt.Printf("full path1: %s\n", fullPath)
+	default:
+		fullPath = path + "/" + foldnam
+	}
 
 	// check path with folder name
     // add trimming wsp to left
-    if _, err1 := os.Stat(fullPath); !os.IsNotExist(err1) {
-        return fullPath, true, nil
-    }
-
-//  fmt.Printf("full path2: %s\n", fullPath)
+	if _, err1 := os.Stat(fullPath); !os.IsNotExist(err1) {
+		return fullPath, true, nil
+	}
 
     // path does not exist, we need to create path
-    ist:=0
-    for i:=0; i<len(fullPath); i++ {
-        if fullPath[i] == '/' {
-            parPath := string(fullPath[ist:i])
-//  fmt.Printf("path %d: %s\n", i, parPath)
-            if _, err1 := os.Stat(parPath); os.IsNotExist(err1) {
-                err2 := os.Mkdir(parPath, os.ModePerm)
-                if err2 != nil {
-                    return "", false, fmt.Errorf("os.Mkdir: lev %d %v", err2, i)
-                }
-//          ist = i + 1
-            }
-        }
+	ist:=0
+	for i:=0; i<len(fullPath); i++ {
+		if fullPath[i] == '/' {
+			parPath := string(fullPath[ist:i])
+			if _, err1 := os.Stat(parPath); os.IsNotExist(err1) {
+				err2 := os.Mkdir(parPath, os.ModePerm)
+				if err2 != nil {
+					return "", false, fmt.Errorf("os.Mkdir: lev %d %v", err2, i)
+				}
+			}
+		}
     }
-    err = os.Mkdir(fullPath, os.ModePerm)
-    if err != nil {
-        return "", false, fmt.Errorf("full Path os.Mkdir: %v", err)
-    }
+	err = os.Mkdir(fullPath, os.ModePerm)
+	if err != nil {
+		return "", false, fmt.Errorf("full Path os.Mkdir: %v", err)
+	}
 
-    return fullPath, false, nil
+	return fullPath, false, nil
 }
 
