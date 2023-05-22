@@ -176,7 +176,7 @@ func IsAlphaNumeric(let byte)(res bool) {
     return res
 }
 
-// function that tests whether byte is aphanumeric
+// function that tests whether byte is numeric
 func IsNumeric(let byte)(res bool) {
 	res = false
 	if (let >= '0') && (let <= '9') { res = true }
