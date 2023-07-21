@@ -153,6 +153,39 @@ func GetFlags(args []string) (argmap map[string]interface{},  err error){
 	return argmap, nil
 }
 
+// function that parse a string and returns a slice of strings for each word ending with a comma
+func ParseList(src string)(dest *[]string, err error) {
+
+    var list [10]string
+    count:= 0
+    stPos:=0
+    for i:=0; i< len(src); i++ {
+        if src[i] == ',' {
+            list[count] = string(src[stPos:i])
+            stPos = i+1
+            count++
+			if count == 11 {
+				return nil, fmt.Errorf("maximum number of items 10  exceeded!")
+			}
+        }
+    }
+
+    list[count] = string(src[stPos:])
+    count++
+    lp := list[:count]
+
+    return &lp, nil
+}
+
+func PrintList (list *[]string) {
+
+    fmt.Printf("items: %d\n", len(*list))
+    for i:=0; i< len(*list); i++ {
+        fmt.Printf("%d: %s\n", i+1, (*list)[i])
+    }
+
+}
+
 
 // function that tests whether byte is alpha
 func IsAlpha(let byte)(res bool) {
