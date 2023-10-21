@@ -3,26 +3,29 @@ package utilLib
 //
 // library that parses text for chars
 //
-// author prr, azul software
-// created 12/4/2022
+// Created: 12/4/2022
+// Author: prr, azul software
+// Modified: 21/10/2023
+// copyright (c) 2022, 2023 prr, azul software
 //
-// copyright 2022 prr, azul software
-//
-// v2 add parseflags
-// v3 getFlags, parse flags
+// mod 21/10/2023
+// added string to byte conversion with no memory allocation
 //
 
 import (
 	"os"
 	"fmt"
 	"strings"
+	"unsafe"
+	"reflect"
 )
 
-func CheckFilnam(filnam, ext string)(err error) {
+func CheckFilnam(filnam, ext string)(res bool) {
 // check file name extension
+	res = true
     idx := strings.Index(filnam, ext)
-    if idx < 0 { return fmt.Errorf("no pdf extension")}
-    return nil
+    if idx < 0 { res=false}
+    return res
 }
 
 // routine that reads cli and returns a map of key and values
@@ -222,6 +225,22 @@ func IsWsp(let byte)(res bool) {
 	if let ==' ' { res = true}
 	return res
 }
+
+// https://github.com/valyala/fasthttp
+// no memory allocation conversions
+func Byt2Str(b []byte) string {
+    return *(*string)(unsafe.Pointer(&b))
+}
+
+func Str2Byt(s string) (b []byte) {
+    bh := (*reflect.SliceHeader)(unsafe.Pointer(&b))
+    sh := (*reflect.StringHeader)(unsafe.Pointer(&s))
+    bh.Data = sh.Data
+    bh.Cap = sh.Len
+    bh.Len = sh.Len
+    return b
+}
+
 
 // function that displays a console error message and exits program
 func FatErr(fs string, msg string, err error) {
