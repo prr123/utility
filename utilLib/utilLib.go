@@ -18,6 +18,8 @@ import (
 	"strings"
 	"unsafe"
 	"reflect"
+    "math/rand"
+    "time"
 )
 
 func CheckFilnam(filnam, ext string)(res bool) {
@@ -26,6 +28,22 @@ func CheckFilnam(filnam, ext string)(res bool) {
     idx := strings.Index(filnam, ext)
     if idx < 0 { res=false}
     return res
+}
+
+func GenRanData (rangeStart, rangeEnd int) (bdat []byte) {
+
+    var seededRand = rand.New(rand.NewSource(time.Now().UnixNano()))
+
+    offset := rangeEnd - rangeStart
+
+    randLength := seededRand.Intn(offset) + rangeStart
+    bdat = make([]byte, randLength)
+
+    charset := "abcdefghijklmnopqrstuvw0123456789"
+    for i := range bdat {
+        bdat[i] = charset[seededRand.Intn(len(charset)-1)]
+    }
+    return bdat
 }
 
 // routine that reads cli and returns a map of key and values
