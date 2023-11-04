@@ -46,6 +46,32 @@ func GenRanData (rangeStart, rangeEnd int) (bdat []byte) {
     return bdat
 }
 
+// function that calculates the near highest number that is a power of 2
+// ref: https://graphics.stanford.edu/~seander/bithacks.html
+//
+func Pow2two(inum int)(num uint32) {
+
+    num = uint32(inum)
+
+    num--
+    num = num | num>>1
+    num = num | num>>2
+    num = num | num>>4
+    num = num | num>>8
+    num = num | num>>16
+    num++
+	return num
+}
+
+func CheckPow2(num uint32)(res bool) {
+
+	res = false
+	if num ==0 {return res}
+
+	res = num & (num -1) == 0
+	return res
+}
+
 // routine that reads cli and returns a map of key and values
 func ParseFlagsStart(args []string, flags []string, flagStart int) (argmap map[string]interface{}, err error){
 
