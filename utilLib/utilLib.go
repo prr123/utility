@@ -16,6 +16,7 @@ import (
 	"os"
 	"fmt"
 	"strings"
+	"strconv"
 	"unsafe"
 	"reflect"
     "math/rand"
@@ -71,6 +72,59 @@ func CheckPow2(num uint32)(res bool) {
 	res = num & (num -1) == 0
 	return res
 }
+
+func CvtSize(sizeStr string, two bool) (siz uint64, err error) {
+
+    // check last letter of size
+    let := sizeStr[len(sizeStr) -1]
+    fmt.Printf("last letter: %q ", let)
+
+    // if last letter is a letter, convert the rest into a number
+    var mult uint64 = 1
+    switch let {
+    case 'K':
+        mult = 1000
+
+    case 'M':
+        mult = 1000000
+
+    case 'G':
+        mult = 1000000000
+
+    default:
+        if !IsNumeric(let) {
+            return 0 , fmt.Errorf("let is not alphaNumeric!")
+        }
+    }
+//  fmt.Printf("size mult: %d\n", mult)
+
+    intStr:=""
+    if mult>1 {
+        intStr = string(sizeStr[:len(sizeStr)-1])
+    } else {
+        intStr = string(sizeStr[:len(sizeStr)])
+    }
+
+    inum, err := strconv.Atoi(intStr)
+    if err !=nil {return 0, fmt.Errorf("error -- cannot convert intStr: %s: %v", intStr, err)}
+    num := uint64(inum)*uint64(mult)
+
+    fmt.Printf("res: %d\n", inum)
+
+    if !two {return num, nil}
+
+    num--
+    num = num | num>>1
+    num = num | num>>2
+    num = num | num>>4
+    num = num | num>>8
+    num = num | num>>16
+    num = num | num>>32
+    num++
+
+    return num, nil
+}
+
 
 // routine that reads cli and returns a map of key and values
 func ParseFlagsStart(args []string, flags []string, flagStart int) (argmap map[string]interface{}, err error){
